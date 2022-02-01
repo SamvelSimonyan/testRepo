@@ -18,7 +18,10 @@
 							"    pm.expect(response.uuid).to.exist;",
 							"});",
 							"",
-							"pm.environment.set(\"uuid\", response.uuid);"
+							"pm.environment.set(\"uuid\", response.uuid);",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -186,7 +189,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							""
+							"process"
 						],
 						"type": "text/javascript"
 					}
