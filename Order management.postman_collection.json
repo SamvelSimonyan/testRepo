@@ -1,0 +1,260 @@
+{
+	"info": {
+		"_postman_id": "711df1c5-5d10-4878-8af5-693e5df38664",
+		"name": "Order management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Generate reference",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response = pm.response.json();",
+							"",
+							"pm.test(\"Should contain reference id\", function () {",
+							"    pm.expect(response.uuid).to.exist;",
+							"});",
+							"",
+							"pm.environment.set(\"uuid\", response.uuid);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "httpbin.org/uuid",
+					"host": [
+						"httpbin",
+						"org"
+					],
+					"path": [
+						"uuid"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"",
+							"if(pm.variables.get(\"positive\")==true)",
+							"{",
+							"pm.test(\"Should contain the reference id\", function () {",
+							"    pm.expect(response.json.referenceId).to.eql(pm.environment.get(\"uuid\"));",
+							"});",
+							"",
+							"pm.test(\"Should contain the customer id\", function () {",
+							"    pm.expect(response.json.customerId).to.eql(parseInt( pm.variables.get(\"customerId\")));",
+							"});",
+							"",
+							"pm.test(\"Should contain the product id\", function () {",
+							"    pm.expect(response.json.productId).to.eql(parseInt(pm.variables.get(\"productId\")));",
+							"});",
+							"}",
+							"else",
+							"{",
+							"    pm.test(\"negative test case\", function () {",
+							"   pm.expect(response.json).to.be.null;})",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set('metaInfo',JSON.stringify(pm.iterationData.get('metaInfo')));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"referenceId\": \"{{uuid}}\",\n\t\"customerId\": {{customerId}},\n\t\"productId\": {{productId}},\n    \"metaInfo\":{{metaInfo}}\n    \n}"
+				},
+				"url": {
+					"raw": "httpbin.org/post",
+					"host": [
+						"httpbin",
+						"org"
+					],
+					"path": [
+						"post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(pm.iterationData.get(\"expStat\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "httpbin.org/status/{{status1}}",
+					"host": [
+						"httpbin",
+						"org"
+					],
+					"path": [
+						"status",
+						"{{status1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create order Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"",
+							"if(pm.variables.get(String(\"positive\"))==\"true\")",
+							"{",
+							"pm.test(\"Should contain the reference id\", function () {",
+							"    pm.expect(response.json.referenceId).to.eql(pm.environment.get(\"uuid\"));",
+							"});",
+							"",
+							"pm.test(\"Should contain the customer id\", function () {",
+							"    pm.expect(response.json.customerId).to.eql(parseInt( pm.variables.get(\"customerId\")));",
+							"});",
+							"",
+							"pm.test(\"Should contain the product id\", function () {",
+							"    pm.expect(response.json.productId).to.eql(parseInt(pm.variables.get(\"productId\")));",
+							"});",
+							"}",
+							"else",
+							"{",
+							"    pm.test(\"negative test case\", function () {",
+							"   pm.expect(response.json).to.be.null;})",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"referenceId\": \"{{uuid}}\",\n\t\"customerId\": {{customerId}},\n\t\"productId\": {{productId}}\n    \n}"
+				},
+				"url": {
+					"raw": "httpbin.org/post",
+					"host": [
+						"httpbin",
+						"org"
+					],
+					"path": [
+						"post"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "customerId",
+			"value": "200",
+			"type": "string"
+		},
+		{
+			"key": "productId",
+			"value": "300",
+			"type": "string"
+		},
+		{
+			"key": "positive",
+			"value": "true",
+			"type": "string"
+		}
+	]
+}
